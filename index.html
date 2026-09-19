@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#1769e0">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>MedLembrete</title>
 <style>
 :root{--p:#1769e0;--bg:#f4f7fb;--card:#fff;--txt:#142033;--muted:#667085;--bd:#e3e8ef;--ok:#15905b;--warn:#d97706;--red:#d92d20;--purple:#6941c6}
@@ -56,6 +58,7 @@ function renderHistory(){let h=db.history.slice(-20).reverse();$("historyBody").
 function render(){resetDay();renderNext();renderMeds();renderToday();renderHistory()}
 $("add").onclick=()=>openForm();$("closeForm").onclick=closeForm;$("cancel").onclick=closeForm;$("takeNext").onclick=()=>next&&take(next.id,next.time);$("snoozeNext").onclick=()=>{if(next){let m=db.meds.find(x=>x.id===next.id);m.snooze=m.snooze||{};m.snooze[next.time]=Date.now()+600000;toast("Lembrete adiado por 10 minutos.")}};$("historyBtn").onclick=()=>$("history").classList.toggle("open");$("closeModal").onclick=()=>{$("modal").classList.remove("show");delId=null};$("confirm").onclick=()=>{if(delId){db.meds=db.meds.filter(x=>x.id!==delId);save();$("modal").classList.remove("show");delId=null;render();toast("Medicamento excluído.")}};$("notify").onclick=async()=>{if(!("Notification"in window))return toast("Notificações não são suportadas.");let p=await Notification.requestPermission();toast(p==="granted"?"Notificações ativadas ✓":"Permissão não concedida.")};
 render();setInterval(render,30000);
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));}
 </script>
 </body>
 </html>
