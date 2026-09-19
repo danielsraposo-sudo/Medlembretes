@@ -1,0 +1,1996 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1769e0">
+<meta name="description" content="MedLembrete - lembrete simples de medicamentos">
+<title>MedLembrete</title>
+
+<style>
+:root{
+    --primary:#1769e0;
+    --primary-dark:#0f55bd;
+    --bg:#f4f6f8;
+    --card:#ffffff;
+    --text:#17202a;
+    --muted:#68727d;
+    --border:#e1e5e9;
+    --success:#18864b;
+    --danger:#b42318;
+    --warning:#a15c00;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    width:100%;
+    max-width:650px;
+    margin:auto;
+    padding:18px;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.logo-small{
+    color:var(--primary);
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+h1{
+    margin:2px 0 0;
+    font-size:26px;
+}
+
+h2{
+    margin:0;
+    font-size:20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:14px;
+}
+
+.label{
+    color:var(--muted);
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:.06em;
+}
+
+.next-name{
+    margin-top:6px;
+    font-size:23px;
+    font-weight:800;
+}
+
+.next-dose{
+    margin-top:4px;
+    color:var(--muted);
+}
+
+.next-time{
+    margin-top:10px;
+    font-size:50px;
+    font-weight:900;
+    letter-spacing:-2px;
+}
+
+.count{
+    color:var(--muted);
+    margin-top:3px;
+}
+
+.actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+    margin-top:15px;
+}
+
+.btn{
+    min-height:46px;
+    border-radius:13px;
+    padding:10px 15px;
+    border:1px solid var(--border);
+    background:white;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+    border-color:var(--primary);
+}
+
+.btn-primary:hover{
+    background:var(--primary-dark);
+}
+
+.btn-danger{
+    color:var(--danger);
+}
+
+.btn-small{
+    min-height:40px;
+    padding:8px 11px;
+    font-size:13px;
+}
+
+.btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.form-grid{
+    display:grid;
+    gap:12px;
+    margin-top:16px;
+}
+
+label{
+    display:block;
+    font-size:14px;
+    font-weight:bold;
+}
+
+input,
+select{
+    width:100%;
+    margin-top:5px;
+    padding:12px;
+    border:1px solid #ccd3da;
+    border-radius:12px;
+    background:white;
+    color:var(--text);
+}
+
+.schedule-box{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:8px;
+    align-items:end;
+}
+
+.schedule-list{
+    margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+}
+
+.time-chip{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    padding:7px 9px;
+    background:#f8fafc;
+}
+
+.time-chip button{
+    border:0;
+    background:transparent;
+    color:var(--danger);
+    font-weight:bold;
+    padding:2px 4px;
+}
+
+.med-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:14px 0;
+    border-bottom:1px solid #edf0f2;
+}
+
+.med-row:last-child{
+    border-bottom:0;
+}
+
+.med-info{
+    min-width:0;
+}
+
+.med-name{
+    font-weight:800;
+    font-size:16px;
+}
+
+.med-details{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:4px;
+}
+
+.med-actions{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    gap:6px;
+}
+
+.status{
+    font-size:12px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+.status-on{
+    color:var(--success);
+}
+
+.status-off{
+    color:var(--muted);
+}
+
+.dose-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding:13px 0;
+    border-bottom:1px solid #edf0f2;
+}
+
+.dose-row:last-child{
+    border-bottom:0;
+}
+
+.dose-info{
+    min-width:0;
+}
+
+.dose-time{
+    font-weight:900;
+    font-size:18px;
+}
+
+.dose-name{
+    font-weight:bold;
+    margin-top:2px;
+}
+
+.dose-dose{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.taken{
+    color:var(--success);
+    font-weight:bold;
+}
+
+.pending{
+    color:var(--warning);
+    font-weight:bold;
+}
+
+.late{
+    color:var(--danger);
+    font-weight:bold;
+}
+
+.empty{
+    color:var(--muted);
+    padding:10px 0;
+    font-size:14px;
+}
+
+.hidden{
+    display:none !important;
+}
+
+.notice{
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+}
+
+.modal-backdrop{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:1000;
+}
+
+.modal{
+    width:100%;
+    max-width:500px;
+    max-height:90vh;
+    overflow:auto;
+    background:white;
+    border-radius:20px;
+    padding:20px;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+}
+
+.close{
+    border:0;
+    background:transparent;
+    font-size:26px;
+}
+
+.confirm-text{
+    line-height:1.5;
+    color:var(--muted);
+}
+
+@media(max-width:480px){
+    .app{
+        padding:12px;
+    }
+
+    .next-time{
+        font-size:43px;
+    }
+
+    .med-row,
+    .dose-row{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .med-actions{
+        width:100%;
+        justify-content:flex-start;
+    }
+
+    .med-actions .btn{
+        flex:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div>
+        <div class="logo-small">MEDLEMBRETE</div>
+        <h1>Meus medicamentos</h1>
+    </div>
+
+    <button id="addMedicationBtn" class="btn btn-primary">
+        + Adicionar
+    </button>
+</header>
+
+<!-- PRÓXIMA DOSE -->
+<section class="card">
+
+    <div class="label">PRÓXIMA DOSE</div>
+
+    <div id="nextName" class="next-name">
+        Nenhum medicamento
+    </div>
+
+    <div id="nextDose" class="next-dose">
+        Cadastre seu primeiro medicamento
+    </div>
+
+    <div id="nextTime" class="next-time">
+        --:--
+    </div>
+
+    <div id="countText" class="count">
+        —
+    </div>
+
+    <div class="actions">
+
+        <button id="takeNextBtn" class="btn btn-primary" disabled>
+            ✓ Tomei
+        </button>
+
+        <button id="snoozeNextBtn" class="btn" disabled>
+            Adiar 10 min
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- FORMULÁRIO -->
+<section id="formCard" class="card hidden">
+
+    <h2 id="formTitle">
+        Adicionar medicamento
+    </h2>
+
+    <form id="medicationForm">
+
+        <div class="form-grid">
+
+            <label>
+                Nome do medicamento
+
+                <input
+                    id="medName"
+                    type="text"
+                    placeholder="Ex.: Losartana"
+                    required
+                >
+            </label>
+
+
+            <label>
+                Dose
+
+                <input
+                    id="medDose"
+                    type="text"
+                    placeholder="Ex.: 50 mg"
+                >
+            </label>
+
+
+            <div>
+
+                <label>
+                    Horários
+                </label>
+
+                <div class="schedule-box">
+
+                    <input
+                        id="newTime"
+                        type="time"
+                    >
+
+                    <button
+                        id="addTimeBtn"
+                        type="button"
+                        class="btn"
+                    >
+                        + Horário
+                    </button>
+
+                </div>
+
+                <div
+                    id="scheduleList"
+                    class="schedule-list"
+                ></div>
+
+            </div>
+
+
+            <label>
+                Observação
+
+                <input
+                    id="medNote"
+                    type="text"
+                    placeholder="Ex.: após o almoço"
+                >
+            </label>
+
+
+            <div class="actions">
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    Salvar
+                </button>
+
+                <button
+                    id="cancelFormBtn"
+                    type="button"
+                    class="btn"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+<!-- MEDICAMENTOS -->
+<section class="card">
+
+    <div style="display:flex;justify-content:space-between;gap:10px;">
+        <h2>Meus medicamentos</h2>
+        <span id="medCount" class="label">0</span>
+    </div>
+
+    <div id="medicationList"></div>
+
+</section>
+
+
+<!-- DOSES DE HOJE -->
+<section class="card">
+
+    <h2>Doses de hoje</h2>
+
+    <div id="todayList"></div>
+
+</section>
+
+
+<!-- HISTÓRICO -->
+<section class="card">
+
+    <h2>Histórico recente</h2>
+
+    <div id="historyList"></div>
+
+</section>
+
+
+<section class="card notice">
+
+    <strong>MedLembrete</strong><br>
+
+    Esta versão salva os dados no armazenamento local do navegador.
+    Para transformar o projeto em aplicativo Android com alarmes nativos,
+    notificações, vibração e funcionamento confiável com o aplicativo fechado,
+    o próximo passo é empacotar este projeto como APK.
+
+</section>
+
+</div>
+
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div id="confirmModal" class="modal-backdrop hidden">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h2>Excluir medicamento?</h2>
+
+            <button
+                id="closeConfirmBtn"
+                class="close"
+                type="button"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <p id="confirmText" class="confirm-text"></p>
+
+        <div class="actions">
+
+            <button
+                id="confirmDeleteBtn"
+                class="btn btn-danger"
+                type="button"
+            >
+                Excluir
+            </button>
+
+            <button
+                id="cancelDeleteBtn"
+                class="btn"
+                type="button"
+            >
+                Cancelar
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   MEDLEMBRETE
+   Aplicação local - versão HTML
+   ========================================================= */
+
+const STORAGE_KEY = "medlembrete_database_v2";
+
+let database = {
+    medications: [],
+    history: [],
+    lastDay: ""
+};
+
+let editingId = null;
+let selectedNextDose = null;
+let formTimes = [];
+let medicationToDelete = null;
+
+
+/* =========================================================
+   ELEMENTOS
+   ========================================================= */
+
+const $ = id => document.getElementById(id);
+
+const formCard = $("formCard");
+const medicationForm = $("medicationForm");
+const scheduleList = $("scheduleList");
+
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+
+function loadDatabase(){
+
+    try{
+
+        const saved = localStorage.getItem(STORAGE_KEY);
+
+        if(saved){
+
+            database = JSON.parse(saved);
+
+        }
+
+    }catch(error){
+
+        console.error("Erro ao carregar dados:", error);
+
+        database = {
+            medications: [],
+            history: [],
+            lastDay: ""
+        };
+
+    }
+
+    if(!Array.isArray(database.medications)){
+        database.medications = [];
+    }
+
+    if(!Array.isArray(database.history)){
+        database.history = [];
+    }
+
+    checkNewDay();
+
+}
+
+
+function saveDatabase(){
+
+    localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(database)
+    );
+
+}
+
+
+/* =========================================================
+   DATA
+   ========================================================= */
+
+function todayKey(){
+
+    const d = new Date();
+
+    return d.getFullYear() +
+        "-" +
+        String(d.getMonth()+1).padStart(2,"0") +
+        "-" +
+        String(d.getDate()).padStart(2,"0");
+
+}
+
+
+function checkNewDay(){
+
+    const today = todayKey();
+
+    if(database.lastDay !== today){
+
+        database.lastDay = today;
+
+        database.medications.forEach(med => {
+
+            med.takenToday = {};
+
+        });
+
+        saveDatabase();
+
+    }
+
+}
+
+
+/* =========================================================
+   HORÁRIOS
+   ========================================================= */
+
+function timeToMinutes(time){
+
+    const parts = String(time).split(":");
+
+    const hours = Number(parts[0]);
+    const minutes = Number(parts[1]);
+
+    if(
+        !Number.isFinite(hours) ||
+        !Number.isFinite(minutes)
+    ){
+        return 0;
+    }
+
+    return hours * 60 + minutes;
+
+}
+
+
+function minutesToTime(minutes){
+
+    minutes = ((minutes % 1440) + 1440) % 1440;
+
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+
+    return (
+        String(h).padStart(2,"0") +
+        ":" +
+        String(m).padStart(2,"0")
+    );
+
+}
+
+
+/* =========================================================
+   FORMULÁRIO
+   ========================================================= */
+
+function openNewForm(){
+
+    editingId = null;
+
+    formTimes = [];
+
+    $("formTitle").textContent =
+        "Adicionar medicamento";
+
+    $("medName").value = "";
+    $("medDose").value = "";
+    $("medNote").value = "";
+    $("newTime").value = "";
+
+    renderFormTimes();
+
+    formCard.classList.remove("hidden");
+
+    $("medName").focus();
+
+}
+
+
+function openEditForm(id){
+
+    const medication =
+        database.medications.find(
+            item => item.id === id
+        );
+
+    if(!medication) return;
+
+    editingId = id;
+
+    formTimes = [...medication.times];
+
+    $("formTitle").textContent =
+        "Editar medicamento";
+
+    $("medName").value =
+        medication.name;
+
+    $("medDose").value =
+        medication.dose || "";
+
+    $("medNote").value =
+        medication.note || "";
+
+    $("newTime").value = "";
+
+    renderFormTimes();
+
+    formCard.classList.remove("hidden");
+
+    $("medName").focus();
+
+}
+
+
+function closeForm(){
+
+    editingId = null;
+
+    formTimes = [];
+
+    medicationForm.reset();
+
+    formCard.classList.add("hidden");
+
+}
+
+
+function addFormTime(){
+
+    const time = $("newTime").value;
+
+    if(!time){
+
+        alert("Escolha um horário.");
+
+        return;
+
+    }
+
+    if(formTimes.includes(time)){
+
+        alert("Esse horário já foi adicionado.");
+
+        return;
+
+    }
+
+    formTimes.push(time);
+
+    formTimes.sort();
+
+    $("newTime").value = "";
+
+    renderFormTimes();
+
+}
+
+
+function removeFormTime(time){
+
+    formTimes =
+        formTimes.filter(
+            item => item !== time
+        );
+
+    renderFormTimes();
+
+}
+
+
+function renderFormTimes(){
+
+    if(!formTimes.length){
+
+        scheduleList.innerHTML =
+            '<div class="empty">Nenhum horário adicionado.</div>';
+
+        return;
+
+    }
+
+    scheduleList.innerHTML =
+        formTimes.map(time => `
+
+            <div class="time-chip">
+
+                <strong>${escapeHTML(time)}</strong>
+
+                <button
+                    type="button"
+                    data-time="${escapeHTML(time)}"
+                    class="remove-time"
+                    title="Remover horário"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        `).join("");
+
+    document
+        .querySelectorAll(".remove-time")
+        .forEach(button => {
+
+            button.addEventListener(
+                "click",
+                () => removeFormTime(
+                    button.dataset.time
+                )
+            );
+
+        });
+
+}
+
+
+/* =========================================================
+   SALVAR MEDICAMENTO
+   ========================================================= */
+
+function saveMedication(event){
+
+    event.preventDefault();
+
+    const name =
+        $("medName").value.trim();
+
+    const dose =
+        $("medDose").value.trim();
+
+    const note =
+        $("medNote").value.trim();
+
+    if(!name){
+
+        alert("Informe o nome do medicamento.");
+
+        return;
+
+    }
+
+    if(!formTimes.length){
+
+        alert("Adicione pelo menos um horário.");
+
+        return;
+
+    }
+
+
+    if(editingId){
+
+        const medication =
+            database.medications.find(
+                item => item.id === editingId
+            );
+
+        if(!medication) return;
+
+        medication.name = name;
+        medication.dose = dose;
+        medication.note = note;
+        medication.times = [...formTimes];
+
+    }else{
+
+        database.medications.push({
+
+            id: Date.now().toString(),
+
+            name,
+
+            dose,
+
+            note,
+
+            times: [...formTimes],
+
+            active: true,
+
+            takenToday: {}
+
+        });
+
+    }
+
+    saveDatabase();
+
+    closeForm();
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   ATIVAR / DESATIVAR
+   ========================================================= */
+
+function toggleMedication(id){
+
+    const medication =
+        database.medications.find(
+            item => item.id === id
+        );
+
+    if(!medication) return;
+
+    medication.active =
+        medication.active === false;
+
+    saveDatabase();
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   EXCLUSÃO
+   ========================================================= */
+
+function openDeleteModal(id){
+
+    const medication =
+        database.medications.find(
+            item => item.id === id
+        );
+
+    if(!medication) return;
+
+    medicationToDelete = id;
+
+    $("confirmText").textContent =
+        "O medicamento " +
+        medication.name +
+        " será removido da lista. O histórico já registrado será preservado.";
+
+    $("confirmModal")
+        .classList.remove("hidden");
+
+}
+
+
+function closeDeleteModal(){
+
+    medicationToDelete = null;
+
+    $("confirmModal")
+        .classList.add("hidden");
+
+}
+
+
+function deleteMedication(){
+
+    if(!medicationToDelete) return;
+
+    database.medications =
+        database.medications.filter(
+            item => item.id !== medicationToDelete
+        );
+
+    saveDatabase();
+
+    closeDeleteModal();
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   DOSES
+   ========================================================= */
+
+function buildTodayDoses(){
+
+    checkNewDay();
+
+    const doses = [];
+
+    database.medications
+        .filter(med => med.active !== false)
+        .forEach(med => {
+
+            med.times.forEach(time => {
+
+                doses.push({
+
+                    medicationId: med.id,
+
+                    name: med.name,
+
+                    dose: med.dose,
+
+                    note: med.note,
+
+                    time,
+
+                    minutes: timeToMinutes(time),
+
+                    taken:
+                        med.takenToday &&
+                        med.takenToday[time] === true
+
+                });
+
+            });
+
+        });
+
+    doses.sort(
+        (a,b) => a.minutes - b.minutes
+    );
+
+    return doses;
+
+}
+
+
+function markDoseTaken(
+    medicationId,
+    time
+){
+
+    const medication =
+        database.medications.find(
+            item => item.id === medicationId
+        );
+
+    if(!medication) return;
+
+    if(!medication.takenToday){
+        medication.takenToday = {};
+    }
+
+    if(medication.takenToday[time]){
+        return;
+    }
+
+    medication.takenToday[time] = true;
+
+
+    const now = new Date();
+
+    database.history.push({
+
+        id: Date.now().toString(),
+
+        medicationId,
+
+        name: medication.name,
+
+        dose: medication.dose,
+
+        scheduledTime: time,
+
+        takenAt:
+            now.toLocaleTimeString(
+                "pt-BR",
+                {
+                    hour:"2-digit",
+                    minute:"2-digit"
+                }
+            ),
+
+        date:
+            now.toLocaleDateString(
+                "pt-BR"
+            )
+
+    });
+
+
+    saveDatabase();
+
+    renderAll();
+
+}
+
+
+function snoozeDose(
+    medicationId,
+    time
+){
+
+    const medication =
+        database.medications.find(
+            item => item.id === medicationId
+        );
+
+    if(!medication) return;
+
+    const originalMinutes =
+        timeToMinutes(time);
+
+    const newMinutes =
+        originalMinutes + 10;
+
+    const newTime =
+        minutesToTime(newMinutes);
+
+
+    if(!medication.snoozedToday){
+        medication.snoozedToday = {};
+    }
+
+    medication.snoozedToday[time] = {
+
+        time:newTime,
+
+        createdAt:Date.now()
+
+    };
+
+    saveDatabase();
+
+    alert(
+        "Lembrete adiado para " +
+        newTime
+    );
+
+    renderAll();
+
+}
+
+
+/* =========================================================
+   PRÓXIMA DOSE
+   ========================================================= */
+
+function getNextDose(){
+
+    const now = new Date();
+
+    const currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    const doses = buildTodayDoses();
+
+    const pending =
+        doses.filter(
+            dose => !dose.taken
+        );
+
+    if(!pending.length){
+
+        return null;
+
+    }
+
+
+    pending.sort((a,b)=>{
+
+        const da =
+            (a.minutes - currentMinutes + 1440) % 1440;
+
+        const db =
+            (b.minutes - currentMinutes + 1440) % 1440;
+
+        return da - db;
+
+    });
+
+
+    return pending[0];
+
+}
+
+
+function renderNextDose(){
+
+    selectedNextDose =
+        getNextDose();
+
+    if(!selectedNextDose){
+
+        $("nextName").textContent =
+            database.medications.length
+                ? "✓ Tudo em dia"
+                : "Nenhum medicamento";
+
+        $("nextDose").textContent =
+            database.medications.length
+                ? "Não há doses pendentes hoje."
+                : "Cadastre seu primeiro medicamento.";
+
+        $("nextTime").textContent =
+            "--:--";
+
+        $("countText").textContent =
+            database.medications.length
+                ? "Nenhuma dose pendente."
+                : "—";
+
+        $("takeNextBtn").disabled = true;
+
+        $("snoozeNextBtn").disabled = true;
+
+        return;
+
+    }
+
+
+    const dose =
+        selectedNextDose;
+
+    $("nextName").textContent =
+        dose.name;
+
+    $("nextDose").textContent =
+        [
+            dose.dose,
+            dose.note
+        ]
+        .filter(Boolean)
+        .join(" • ") ||
+        "Dose cadastrada";
+
+
+    $("nextTime").textContent =
+        dose.time;
+
+
+    const now = new Date();
+
+    const currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+    const difference =
+        (dose.minutes - currentMinutes + 1440) % 1440;
+
+
+    if(difference === 0){
+
+        $("countText").textContent =
+            "🔔 É hora de tomar";
+
+    }else if(difference < 60){
+
+        $("countText").textContent =
+            "Daqui a " +
+            difference +
+            " minuto" +
+            (difference === 1 ? "" : "s");
+
+    }else{
+
+        const hours =
+            Math.floor(difference / 60);
+
+        const minutes =
+            difference % 60;
+
+        $("countText").textContent =
+            "Daqui a " +
+            hours +
+            "h" +
+            (minutes ? " " + minutes + "min" : "");
+
+    }
+
+
+    $("takeNextBtn").disabled = false;
+
+    $("snoozeNextBtn").disabled = false;
+
+}
+
+
+/* =========================================================
+   LISTA DE MEDICAMENTOS
+   ========================================================= */
+
+function renderMedicationList(){
+
+    const container =
+        $("medicationList");
+
+    $("medCount").textContent =
+        database.medications.length +
+        " medicamento" +
+        (database.medications.length === 1 ? "" : "s");
+
+
+    if(!database.medications.length){
+
+        container.innerHTML =
+            '<div class="empty">Nenhum medicamento cadastrado.</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        database.medications
+            .map(med => `
+
+                <div class="med-row">
+
+                    <div class="med-info">
+
+                        <div class="med-name">
+                            ${escapeHTML(med.name)}
+                        </div>
+
+                        <div class="med-details">
+
+                            ${med.dose
+                                ? escapeHTML(med.dose) + " • "
+                                : ""
+                            }
+
+                            ${med.times
+                                .map(escapeHTML)
+                                .join(" • ")
+                            }
+
+                            ${med.note
+                                ? "<br>" +
+                                  escapeHTML(med.note)
+                                : ""
+                            }
+
+                        </div>
+
+                        <div class="status ${
+                            med.active === false
+                                ? "status-off"
+                                : "status-on"
+                        }">
+
+                            ${
+                                med.active === false
+                                    ? "● Desativado"
+                                    : "● Ativo"
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="med-actions">
+
+                        <button
+                            class="btn btn-small"
+                            data-edit="${med.id}"
+                        >
+                            ✏️ Editar
+                        </button>
+
+                        <button
+                            class="btn btn-small"
+                            data-toggle="${med.id}"
+                        >
+                            ${
+                                med.active === false
+                                    ? "Ativar"
+                                    : "Desativar"
+                            }
+                        </button>
+
+                        <button
+                            class="btn btn-small btn-danger"
+                            data-delete="${med.id}"
+                        >
+                            🗑️
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `)
+            .join("");
+
+
+    container
+        .querySelectorAll("[data-edit]")
+        .forEach(button => {
+
+            button.onclick =
+                () => openEditForm(
+                    button.dataset.edit
+                );
+
+        });
+
+
+    container
+        .querySelectorAll("[data-toggle]")
+        .forEach(button => {
+
+            button.onclick =
+                () => toggleMedication(
+                    button.dataset.toggle
+                );
+
+        });
+
+
+    container
+        .querySelectorAll("[data-delete]")
+        .forEach(button => {
+
+            button.onclick =
+                () => openDeleteModal(
+                    button.dataset.delete
+                );
+
+        });
+
+}
+
+
+/* =========================================================
+   DOSES DE HOJE
+   ========================================================= */
+
+function renderTodayList(){
+
+    const container =
+        $("todayList");
+
+    const doses =
+        buildTodayDoses();
+
+
+    if(!doses.length){
+
+        container.innerHTML =
+            '<div class="empty">Nenhuma dose programada para hoje.</div>';
+
+        return;
+
+    }
+
+
+    const now = new Date();
+
+    const currentMinutes =
+        now.getHours() * 60 +
+        now.getMinutes();
+
+
+    container.innerHTML =
+        doses.map(dose => {
+
+            let status = "";
+
+            let action = "";
+
+            if(dose.taken){
+
+                status =
+                    '<span class="taken">✓ Tomado</span>';
+
+            }else if(
+                dose.minutes < currentMinutes
+            ){
+
+                status =
+                    '<span class="late">Atrasado</span>';
+
+                action = `
+                    <button
+                        class="btn btn-small"
+                        data-take="${dose.medicationId}"
+                        data-time="${dose.time}"
+                    >
+                        Tomei
+                    </button>
+                `;
+
+            }else{
+
+                status =
+                    '<span class="pending">Pendente</span>';
+
+                action = `
+                    <button
+                        class="btn btn-small"
+                        data-take="${dose.medicationId}"
+                        data-time="${dose.time}"
+                    >
+                        Tomei
+                    </button>
+                `;
+
+            }
+
+
+            return `
+
+                <div class="dose-row">
+
+                    <div class="dose-info">
+
+                        <div class="dose-time">
+                            ${escapeHTML(dose.time)}
+                        </div>
+
+                        <div class="dose-name">
+                            ${escapeHTML(dose.name)}
+                        </div>
+
+                        ${
+                            dose.dose
+                                ? `<div class="dose-dose">
+                                    ${escapeHTML(dose.dose)}
+                                   </div>`
+                                : ""
+                        }
+
+                    </div>
+
+                    <div>
+                        ${status}
+                        ${action}
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+
+    container
+        .querySelectorAll("[data-take]")
+        .forEach(button => {
+
+            button.onclick =
+                () => markDoseTaken(
+                    button.dataset.take,
+                    button.dataset.time
+                );
+
+        });
+
+}
+
+
+/* =========================================================
+   HISTÓRICO
+   ========================================================= */
+
+function renderHistory(){
+
+    const container =
+        $("historyList");
+
+    const history =
+        database.history
+            .slice()
+            .reverse()
+            .slice(0,20);
+
+
+    if(!history.length){
+
+        container.innerHTML =
+            '<div class="empty">Nenhuma dose tomada ainda.</div>';
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        history.map(item => `
+
+            <div class="dose-row">
+
+                <div class="dose-info">
+
+                    <div class="dose-name">
+                        ${escapeHTML(item.name)}
+                    </div>
+
+                    <div class="dose-dose">
+
+                        Programado:
+                        ${escapeHTML(item.scheduledTime)}
+
+                        • Tomado:
+                        ${escapeHTML(item.takenAt)}
+
+                    </div>
+
+                </div>
+
+                <div class="taken">
+                    ✓ ${escapeHTML(item.date)}
+                </div>
+
+            </div>
+
+        `).join("");
+
+}
+
+
+/* =========================================================
+   NOTIFICAÇÃO
+   ========================================================= */
+
+async function requestNotifications(){
+
+    if(!("Notification" in window)){
+        return;
+    }
+
+    if(Notification.permission === "default"){
+
+        try{
+
+            await Notification.requestPermission();
+
+        }catch(error){
+
+            console.log(
+                "Permissão de notificação não disponível."
+            );
+
+        }
+
+    }
+
+}
+
+
+function checkMedicationAlerts(){
+
+    if(
+        !("Notification" in window) ||
+        Notification.permission !== "granted"
+    ){
+        return;
+    }
+
+
+    const now = new Date();
+
+    const currentTime =
+        now.toTimeString()
+            .slice(0,5);
+
+
+    database.medications
+        .filter(med => med.active !== false)
+        .forEach(med => {
+
+            med.times.forEach(time => {
+
+                const alertKey =
+                    todayKey() +
+                    "_" +
+                    med.id +
+                    "_" +
+                    time;
+
+
+                if(
+                    time === currentTime &&
+                    !sessionStorage.getItem(alertKey)
+                ){
+
+                    sessionStorage.setItem(
+                        alertKey,
+                        "1"
+                    );
+
+
+                    new Notification(
+                        "Hora do medicamento",
+                        {
+                            body:
+                                med.name +
+                                (
+                                    med.dose
+                                        ? " — " + med.dose
+                                        : ""
+                                )
+                        }
+                    );
+
+                }
+
+            });
+
+        });
+
+}
+
+
+/* =========================================================
+   UTILITÁRIO
+   ========================================================= */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   RENDERIZAÇÃO
+   ========================================================= */
+
+function renderAll(){
+
+    checkNewDay();
+
+    renderNextDose();
+
+    renderMedicationList();
+
+    renderTodayList();
+
+    renderHistory();
+
+}
+
+
+/* =========================================================
+   EVENTOS
+   ========================================================= */
+
+$("addMedicationBtn")
+    .addEventListener(
+        "click",
+        openNewForm
+    );
+
+
+$("cancelFormBtn")
+    .addEventListener(
+        "click",
+        closeForm
+    );
+
+
+$("addTimeBtn")
+    .addEventListener(
+        "click",
+        addFormTime
+    );
+
+
+medicationForm
+    .addEventListener(
+        "submit",
+        saveMedication
+    );
+
+
+$("takeNextBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!selectedNextDose){
+                return;
+            }
+
+            markDoseTaken(
+                selectedNextDose.medicationId,
+                selectedNextDose.time
+            );
+
+        }
+    );
+
+
+$("snoozeNextBtn")
+    .addEventListener(
+        "click",
+        () => {
+
+            if(!selectedNextDose){
+                return;
+            }
+
+            snoozeDose(
+                selectedNextDose.medicationId,
+                selectedNextDose.time
+            );
+
+        }
+    );
+
+
+$("closeConfirmBtn")
+    .addEventListener(
+        "click",
+        closeDeleteModal
+    );
+
+
+$("cancelDeleteBtn")
+    .addEventListener(
+        "click",
+        closeDeleteModal
+    );
+
+
+$("confirmDeleteBtn")
+    .addEventListener(
+        "click",
+        deleteMedication
+    );
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+   ========================================================= */
+
+loadDatabase();
+
+renderAll();
+
+requestNotifications();
+
+setInterval(
+    () => {
+
+        checkNewDay();
+
+        renderAll();
+
+        checkMedicationAlerts();
+
+    },
+    30000
+);
+
+</script>
+
+</body>
+</html>
